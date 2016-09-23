@@ -38,6 +38,13 @@ class TogglManager
     projects_with_tasks(workspace_id(workspace_name))
   end
 
+  def current_time_entry
+    current_time_entry = api.get_current_time_entry
+    return "no time entry started" if current_time_entry.nil?
+    return show_current_time_entry(current_time_entry)
+    "error getting time entry"
+  end
+
   private
 
   attr_reader :api, :user, :current_user, :workspaces,
@@ -84,5 +91,17 @@ class TogglManager
     pid = project_id(workspace_name, project_name)
     api.tasks(wid)
       .find { |t| t["pid"] == pid && t["name"] == task_name }["id"]
+  end
+
+  def show_current_time_entry(entry)
+    project_name = api.get_project(entry['pid'])['name']
+    "#{entry['description']} |#{project_name}| #{parse_time(Time.parse(entry['start']))}"
+  end
+
+  def parse_time(start_time)
+    sec = Time.now - start_time
+    min, sec = sec.divmod(60)
+    hour, min = min.divmod(60)
+    "%02d:%02d:%02d" % [hour, min, sec]
   end
 end
