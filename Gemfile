@@ -1,12 +1,14 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'jbuilder', '~> 2.5'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.0'
-gem 'jbuilder', '~> 2.5'
+gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
+gem 'togglv8'
 
 group :development, :test do
   gem 'pry'
+  gem 'awesome_print'
 end
 
 group :development do
