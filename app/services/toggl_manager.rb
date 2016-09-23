@@ -1,22 +1,23 @@
 class TogglManager
-
-  def initialize
-    @config = YAML::load_file('config.yml')
-    init_api
-    load_defaults
+  def initialize(current_user)
+    @current_user = current_user
+    @api = TogglV8::API.new(current_user.toggl_api_token)
+    @user = api.me(true)
+    @workspaces = api.my_workspaces(user)
+    fetch_defaults
   end
 
-  def start_entry(description = nil,
-                  task_name = nil,
-                  project_name = default_project["name"],
-                  billable = default_billable,
-                  workspace_name = default_workspace["name"])
+  def start_entry(description:, task_name:, project_name:, billable:, workspace_name:)
+    project_name ||= default_project["name"]
+    billable ||= default_billable
+    workspace_name ||= default_workspace["name"]
+
     new_entry_attributes = {
       "wid" => workspace_id(workspace_name),
       "pid" => project_id(workspace_name, project_name),
       "billable" => billable,
       "duration" => Time.now.to_i * -1,
-      "start" => @api.iso8601((Time.now - 3600).to_datetime),
+      "start" => @api.iso8601(Time.now.to_datetime),
       "created_with" => "toggler",
     }
     new_entry_attributes["description"] = description if description
@@ -39,24 +40,18 @@ class TogglManager
 
   private
 
-  attr_reader :api, :user, :workspaces, :default_billable, :default_project, :default_workspace
+  attr_reader :api, :user, :current_user, :workspaces,
+              :default_billable, :default_project, :default_workspace
 
-  def init_api
-    @api_key = @config["toggl_api_key"]
-    @api = TogglV8::API.new(@api_key)
-    @user = api.me(true)
-    @workspaces = api.my_workspaces(user)
-  end
-
-  def load_defaults
-    @default_billable = @config["billable_by_default"];
+  def fetch_defaults
+    @default_billable = current_user.default_billable
     @default_workspace = {
-      "id" => workspace_id(@config["default_workspace_name"]),
-      "name" => @config["default_workspace_name"]
+      "id" => workspace_id(current_user.default_workspace_name),
+      "name" => current_user.default_workspace_name
     }
     @default_project = {
-      "id" => project_id(@default_workspace["name"], @config["default_project_name"]),
-      "name" => @config["default_project_name"]
+      "id" => project_id(current_user.default_workspace_name, current_user.default_project_name),
+      "name" => current_user.default_project_name
     }
   end
 
