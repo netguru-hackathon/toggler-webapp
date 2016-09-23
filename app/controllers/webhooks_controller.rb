@@ -37,8 +37,9 @@ class WebhooksController < ApplicationController
     "Toggler usage: \n" \
     "First of all, link your Slack account with Toggl: `/toggl login TOGGL_API_KEY`\n" \
     "Secondly, set your default project: `/toggl default_project PROJECT_NAME`\n" \
-    "You can then start and stop your timer: `/toggl start` and `/toggl stop`\n" \
+    "You can then start and stop your timer: `/toggl start` and `/toggl stop` - add '$' if the entry should be billable \n" \
     "If you work on multiple projects simply run /toggl start PROJECT_NAME\n" \
+    "You can also set if the entries should be billable by default: /toggl default billable true/false"
     "Have fun with Toggler! :heart:"
   end
 
