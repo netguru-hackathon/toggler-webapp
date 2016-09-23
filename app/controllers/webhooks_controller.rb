@@ -7,6 +7,9 @@ class WebhooksController < ApplicationController
     when "default_project"
       return prompt_login unless current_user.present?
       return set_default_project
+    when "default_billable"
+      return prompt_login unless current_user.present?
+      return set_default_billable
     when "start"
       return prompt_login unless current_user.present?
       start_time_entry
@@ -50,8 +53,13 @@ class WebhooksController < ApplicationController
   end
 
   def set_default_project
-    current_user.update(slack_user_id: slack_user_id, default_project_name: default_project)
+    current_user.update(default_project_name: default_project)
     render plain: "Default project set to #{default_project}", status: 200
+  end
+
+  def set_default_billable
+    current_user.update(default_billable: default_billable)
+    render plain: "Default billable set to #{default_billable}", status: 200
   end
 
   def register_user
@@ -60,7 +68,7 @@ class WebhooksController < ApplicationController
   end
 
   def update_toggl_token
-    current_user.update(slack_user_id: slack_user_id, toggl_api_token: toggl_api_token)
+    current_user.update(toggl_api_token: toggl_api_token)
     render text: 'Update Toggl API token', status: 200
   end
 
@@ -74,6 +82,10 @@ class WebhooksController < ApplicationController
 
   def default_project
     @command_args.second
+  end
+
+  def default_billable
+    @command_args.second == "true"
   end
 
   def start_time_entry
