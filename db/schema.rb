@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160923110219) do
+ActiveRecord::Schema.define(version: 20160923111450) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,8 +18,12 @@ ActiveRecord::Schema.define(version: 20160923110219) do
   create_table "users", force: :cascade do |t|
     t.string   "slack_user_id"
     t.string   "toggl_api_token"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.string   "default_workspace_name"
+    t.string   "default_project_name"
+    t.boolean  "default_billable"
+    t.index ["slack_user_id"], name: "index_users_on_slack_user_id", unique: true, using: :btree
   end
 
 end
