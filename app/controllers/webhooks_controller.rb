@@ -40,7 +40,7 @@ class WebhooksController < ApplicationController
     "You can also set if the entries should be billable by default: `/toggl default_billable true/false`\n" \
     "You can then start and stop your timer: `/toggl start` and `/toggl stop` - add '$' if the entry should be billable \n" \
     "If you work on multiple projects simply run `/toggl start PROJECT_NAME`\n" \
-    "Optional arguments for `/toggl start` are: _PROJECT_NAME/TASK_NAME description $_\n" \
+    "Optional arguments for `/toggl start` are: _PROJECT_NAME/TASK_NAME $ description_\n" \
     "Have fun with Toggler! :heart:"
   end
 
@@ -91,10 +91,10 @@ class WebhooksController < ApplicationController
   end
 
   def start_time_entry
-    text = TogglManager.new(current_user).start_entry(description: @command_args[2],
+    text = TogglManager.new(current_user).start_entry(description: @command_args[3],
                                                       project_name: @command_args[1]&.split("/")&.first,
                                                       task_name: @command_args[1]&.split("/")&.last,
-                                                      billable: @command_args[3] == "$")
+                                                      billable: @command_args[2] == "$")
     render text: text, status: 200
   end
 end
