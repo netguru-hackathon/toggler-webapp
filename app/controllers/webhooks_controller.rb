@@ -6,10 +6,13 @@ class WebhooksController < ApplicationController
       return login
     when "start"
       return prompt_login unless current_user.present?
+      start_time_entry
     when "stop"
       return prompt_login unless current_user.present?
+      render text: TogglManager.new(current_user).stop_entry, status: 200
     when "list"
       return prompt_login unless current_user.present?
+      render text: TogglManager.new(current_user).list_projects_with_tasks, status: 200
     end
     return render text: help_text, status: 200
   end
@@ -54,5 +57,13 @@ class WebhooksController < ApplicationController
 
   def default_project
     @command_args.third
+  end
+
+  def start_time_entry
+    text = TogglManager.new(current_user).start_entry(description: @command_args[2],
+                                                      project_name: @command_args[1]&.split("/")&.first,
+                                                      task_name: @command_args[1]&.split("/")&.last,
+                                                      billable: @command_args[3] == "$")
+    render text: text, status: 200
   end
 end

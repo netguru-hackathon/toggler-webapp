@@ -7,7 +7,7 @@ class TogglManager
     fetch_defaults
   end
 
-  def start_entry(description:, task_name:, project_name:, billable:, workspace_name:)
+  def start_entry(description:, task_name:, project_name:, billable:)
     project_name ||= default_project["name"]
     billable ||= default_billable
     workspace_name ||= default_workspace["name"]
