@@ -12,9 +12,10 @@ class WebhooksController < ApplicationController
       render text: TogglManager.new(current_user).stop_entry, status: 200
     when "list"
       return prompt_login unless current_user.present?
-      render text: TogglManager.new(current_user).list_projects_with_tasks, status: 200
+      render text: TogglManager.new(current_user).list_projects_with_tasks.join("\n"), status: 200
+    else
+      return render text: help_text, status: 200
     end
-    return render text: help_text, status: 200
   end
 
   private
