@@ -4,6 +4,9 @@ class WebhooksController < ApplicationController
     case @command_args.first
     when "login"
       return login
+    when "default_project"
+      return prompt_login unless current_user.present?
+      return set_default_project
     when "start"
       return prompt_login unless current_user.present?
       start_time_entry
@@ -38,13 +41,18 @@ class WebhooksController < ApplicationController
     return update_toggl_token
   end
 
+  def set_default_project
+    current_user.update(slack_user_id: slack_user_id, default_project_name: default_project)
+    render plain: "Default project set to #{default_project}", status: 200
+  end
+
   def register_user
-    User.create(slack_user_id: slack_user_id, toggl_api_token: toggl_api_token, default_workspace_name: "Dajvido's workspace", default_project_name: default_project, default_billable: false)
+    User.create(slack_user_id: slack_user_id, toggl_api_token: toggl_api_token, default_workspace_name: "netguru", default_project_name: nil, default_billable: false)
     render text: 'Registered successfully', status: 200
   end
 
   def update_toggl_token
-    current_user.update(slack_user_id: slack_user_id, toggl_api_token: toggl_api_token, default_workspace_name: "Dajvido's workspace", default_project_name: default_project, default_billable: false)
+    current_user.update(slack_user_id: slack_user_id, toggl_api_token: toggl_api_token)
     render text: 'Update Toggl API token', status: 200
   end
 
@@ -57,7 +65,7 @@ class WebhooksController < ApplicationController
   end
 
   def default_project
-    @command_args.third
+    @command_args.second
   end
 
   def start_time_entry
