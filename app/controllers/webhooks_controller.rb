@@ -7,17 +7,25 @@ class WebhooksController < ApplicationController
     when "login"
       # login
     when "start"
-      # start
+      return login unless current_user.present?
     when "stop"
-      # stop
+      return login unless current_user.present?
     when "list"
-      # list
+      return login unless current_user.present?
     end
   end
 
   private
 
+  def current_user
+    @current_user ||= User.find_by(slack_user_id: params[:user_id])
+  end
+
   def help_text
     "Toggler usage: blabla"
+  end
+
+  def login
+    render text: "Please login", status: 401
   end
 end
