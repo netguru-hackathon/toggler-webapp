@@ -31,7 +31,12 @@ class WebhooksController < ApplicationController
   end
 
   def help_text
-    "Toggler usage: blabla"
+    "Toggler usage: \n" \
+    "First of all, connect you Slack account with Toggl: `/toggl login TOGGL_API_KEY`\n" \
+    "Secondly, set your default project: `/toggl default_project PROJECT_NAME`\n" \
+    "You can then start and stop your timer: `/toggl start` and `/toggl stop`\n" \
+    "If you work on multiple projects simply run /toggl start PROJECT_NAME\n" \
+    "Have fun with Toggler!"
   end
 
   def prompt_login
